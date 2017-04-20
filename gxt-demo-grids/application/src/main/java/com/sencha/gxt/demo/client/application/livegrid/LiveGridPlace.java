@@ -1,36 +1,36 @@
-package com.sencha.gxt.demo.client.application.grid;
+package com.sencha.gxt.demo.client.application.livegrid;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
-public class GridPlace extends Place {
+public class LiveGridPlace extends Place {
   
   /** 
    * I'm not really using the tokenizer here, but good for example
    */
-  @Prefix("grid")
-  public static class Tokenizer implements PlaceTokenizer<GridPlace> {
+  @Prefix("livegrid")
+  public static class Tokenizer implements PlaceTokenizer<LiveGridPlace> {
 
     public Tokenizer() {
     }
     
     @Override
-    public String getToken(GridPlace place) {
+    public String getToken(LiveGridPlace place) {
       String token = place.getToken();
       return token;
     }
 
     @Override
-    public GridPlace getPlace(String token) {
-      return new GridPlace(token);
+    public LiveGridPlace getPlace(String token) {
+      return new LiveGridPlace(token);
     }
 
   }
   
   private String token;
 
-  public GridPlace(String token) {
+  public LiveGridPlace(String token) {
     this.token = token;
   }
 

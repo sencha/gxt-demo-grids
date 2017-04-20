@@ -10,9 +10,10 @@ import com.google.gwt.place.shared.PlaceHistoryHandler;
 import com.google.web.bindery.event.shared.EventBus;
 import com.sencha.gxt.demo.client.activity.ApplicationActivityMapper;
 import com.sencha.gxt.demo.client.activity.ApplicationPlaceHistoryMapper;
-import com.sencha.gxt.demo.client.application.grid.GridPlace;
 import com.sencha.gxt.demo.client.application.home.HomePlace;
+import com.sencha.gxt.demo.client.application.livegrid.LiveGridPlace;
 import com.sencha.gxt.demo.client.application.login.LoginPlace;
+import com.sencha.gxt.demo.client.application.simplegrid.SimpleGridPlace;
 
 public class ClientFactory {
 
@@ -97,8 +98,12 @@ public class ClientFactory {
     return new LoginPlace.Tokenizer();
   }
   
-  public GridPlace.Tokenizer getGridTokenizer() {
-    return new GridPlace.Tokenizer();
+  public SimpleGridPlace.Tokenizer getGridTokenizer() {
+    return new SimpleGridPlace.Tokenizer();
+  }
+  
+  public LiveGridPlace.Tokenizer getLiveGridTokenizer() {
+    return new LiveGridPlace.Tokenizer();
   }
 
 }

@@ -1,4 +1,4 @@
-package com.sencha.gxt.demo.client.application.grid;
+package com.sencha.gxt.demo.client.application.livegrid;
 
 import com.google.gwt.activity.shared.AbstractActivity;
 import com.google.gwt.event.shared.EventBus;
@@ -7,13 +7,13 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 
 import com.sencha.gxt.demo.client.ClientFactory;
 
-public class GridActivity extends AbstractActivity implements GridPresenter {
+public class LiveGridActivity extends AbstractActivity implements LiveGridPresenter {
 
-  private GridView view;
+  private LiveGridView view;
   private ClientFactory clientFactory;
   private boolean running;
 
-  public GridActivity(GridPlace place, ClientFactory clientFactory) {
+  public LiveGridActivity(LiveGridPlace place, ClientFactory clientFactory) {
     this.clientFactory = clientFactory;
   }
 
@@ -23,7 +23,7 @@ public class GridActivity extends AbstractActivity implements GridPresenter {
   @Override
   public void start(AcceptsOneWidget containerWidget, EventBus eventBus) {
     if (view == null) {
-      view = new GridView();
+      view = new LiveGridView();
     }
 
     view.setPresenter(this);
