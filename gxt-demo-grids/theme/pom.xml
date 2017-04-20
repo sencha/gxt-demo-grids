@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.sencha.gxt.demo</groupId>
+    <artifactId>gxt-demo-grids</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>gxt-demo-grids-theme</artifactId>
+  <packaging>jar</packaging>
+  <name>gxt-demo-grids Theme</name>
+  <description>GXT Application Theme</description>
+
+  <properties>
+    <theme.gen.directory>${project.basedir}/target/generated-sources</theme.gen.directory>
+
+    <phantomjs.version>2.1.1</phantomjs.version>
+    <bin>bin/phantomjs</bin>
+  </properties>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/java</directory>
+      </resource>
+      <!-- Theme config -->
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      <!-- Theme file resources, icons -->
+      <resource>
+        <directory>src/main/files</directory>
+      </resource>
+    </resources>
+
+    <plugins>
+      <!-- Download phantomjs for the platoform for building the theme -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-scripts</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/phantomjs</outputDirectory>
+              <stripVersion>true</stripVersion>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>com.github.klieber</groupId>
+                  <artifactId>phantomjs</artifactId>
+                  <version>${phantomjs.version}</version>
+                  <classifier>${platform}</classifier>
+                  <overWrite>true</overWrite>
+                  <type>zip</type>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.4.0</version>
+        <executions>
+          <!-- If you see an error in eclipse on this next line "An exception occurred while executing the Java class. null", 
+            this indicates that there was a problem generating Neptune from the config file. Run from the command line to get the full 
+            error, and on fixing it the error should go away, though a clean may also be required -->
+          <execution>
+            <id>generate-theme</id>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+              <mainClass>com.sencha.gxt.themebuilder.ThemeBuilder</mainClass>
+              <arguments>
+                <argument>-gen</argument>
+                <argument>${theme.gen.directory}</argument>
+                <argument>-imageFile</argument>
+                <argument>${project.build.directory}/snapshot.png</argument>
+                <argument>-manifestFile</argument>
+                <argument>${project.build.directory}/snapshot.json</argument>
+                <argument>-out</argument>
+                <argument>${project.build.directory}/${project.build.finalName}-generatedtheme.jar</argument>
+                <argument>-imagePath</argument>
+                <argument>${project.basedir}/src/main/files/icons</argument>
+                <argument>-warDir</argument>
+                <argument>${project.build.directory}/war</argument>
+                <!-- Comment out slicedDisabled to disable -->
+                <argument>-slicedDisabled</argument>
+                <argument>false</argument>
+                <argument>-sourcesOnly</argument>
+                <argument>true</argument>
+                <argument>-gwtXmlFilename</argument>
+                <argument>BaseTheme.gwt.xml</argument>
+                <argument>${project.basedir}/src/main/resources/tritium.theme</argument>
+              </arguments>
+              <systemProperties>
+                <systemProperty>
+                  <key>phantomBin</key>
+                  <value>${project.build.directory}/phantomjs/phantomjs-${phantomjs.version}-${platform}/${bin}</value>
+                </systemProperty>
+              </systemProperties>
+              <includePluginDependencies>true</includePluginDependencies>
+              <!-- Ignore themebuilder thread exception -->
+              <cleanupDaemonThreads>false</cleanupDaemonThreads>
+            </configuration>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>com.sencha.gxt</groupId>
+            <artifactId>gxt-themebuilder</artifactId>
+            <version>${gxt.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+
+      <!-- Add teh target/theme-gen to be included as a sourcepath -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>1.9.1</version>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${theme.gen.directory}</source>
+              </sources>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>add-resource</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>add-resource</goal>
+            </goals>
+            <configuration>
+              <resources>
+                <resource>
+                  <directory>${theme.gen.directory}</directory>
+                  <includes>
+                    <include>**</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <!-- Eclipse controls Maven execution directions -->
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>1.0.0</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <!-- Unpack phantomjs zip into target -->
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <versionRange>[2.8,)</versionRange>
+                    <goals>
+                      <goal>unpack</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <execute>
+                      <!-- Run on workspace build -->
+                      <runOnConfiguration>true</runOnConfiguration>
+                    </execute>
+                  </action>
+                </pluginExecution>
+
+                <!-- Theme build execution controls -->
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <versionRange>[1.0.0,)</versionRange>
+                    <goals>
+                      <goal>java</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <!-- Remove ignore and add an execute to turn on m2e execution -->
+                    <ignore />
+                    <!-- https://wiki.eclipse.org/M2E_compatible_maven_plugins -->
+                    <execute></execute>
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.sencha.gxt</groupId>
+      <artifactId>gxt-themebuilder</artifactId>
+      <version>${gxt.version}</version>
+    </dependency>
+  </dependencies>
+
+  <profiles>
+    <profile>
+      <id>win32</id>
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+      </activation>
+      <properties>
+        <platform>windows</platform>
+        <bin>phantomjs.exe</bin>
+        <archive>.zip</archive>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>mac</id>
+      <activation>
+        <os>
+          <family>mac</family>
+        </os>
+      </activation>
+      <properties>
+        <platform>macosx</platform>
+        <archive>.zip</archive>
+      </properties>
+    </profile>
+    <profile>
+      <id>linux</id>
+      <activation>
+        <os>
+          <family>unix</family>
+          <name>linux</name>
+        </os>
+      </activation>
+      <properties>
+        <platform>linux-i686</platform>
+        <archive>.tar.bz2</archive>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.googlecode.maven-download-plugin</groupId>
+            <artifactId>maven-download-plugin</artifactId>
+            <configuration>
+              <unpack>false</unpack>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.7</version>
+            <executions>
+              <execution>
+                <id>unpack-linux</id>
+                <phase>compile</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <failOnError>true</failOnError>
+                  <target>
+                    <bunzip2 src="${project.build.directory}/phantomjs/phantomjs-${phantomjs.version}-${platform}.tar.bz2" />
+                    <untar src="${project.build.directory}/phantomjs/phantomjs-${phantomjs.version}-${platform}.tar" dest="${project.build.directory}/phantomjs/" />
+                  </target>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>lin64</id>
+      <activation>
+        <os>
+          <family>unix</family>
+          <arch>amd64</arch>
+          <name>linux</name>
+        </os>
+      </activation>
+      <properties>
+        <platform>linux-x86_64</platform>
+      </properties>
+    </profile>
+  </profiles>
+
+</project>
