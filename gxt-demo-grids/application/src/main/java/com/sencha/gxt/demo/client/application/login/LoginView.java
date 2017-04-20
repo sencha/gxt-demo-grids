@@ -3,10 +3,10 @@ package com.sencha.gxt.demo.client.application.login;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
+import com.sencha.gxt.core.client.util.Margins;
+import com.sencha.gxt.demo.client.application.Presenter;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData;
-
-import com.sencha.gxt.demo.client.application.Presenter;
 
 public class LoginView implements IsWidget {
 
@@ -26,8 +26,8 @@ public class LoginView implements IsWidget {
   public Widget asWidget() {
     if (widget == null) {
       widget = new VerticalLayoutContainer();
-      
-      widget.add(new HTML("Login"), new VerticalLayoutData(1,1));
+
+      widget.add(new HTML("Login"), new VerticalLayoutData(1, 1, new Margins(10)));
     }
 
     return widget;
