@@ -14,6 +14,8 @@
   <description>GXT project with custom theme setup</description>
 
   <properties>
+    <appengine.maven.plugin>1.0.0</appengine.maven.plugin>
+  
     <webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
   </properties>
 
@@ -78,6 +80,21 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      
+      <!-- https://github.com/GoogleCloudPlatform/getting-started-java/tree/master/helloworld-servlet -->
+      <!-- run: mvn jetty:run-exploded -->
+      <!-- auth: gcloud init -->
+      <!-- deploy: mvn appengine:deploy -->
+      <plugin>
+        <groupId>com.google.cloud.tools</groupId>
+        <artifactId>appengine-maven-plugin</artifactId>
+        <version>${appengine.maven.plugin}</version>
+        <configuration>
+          <!-- deploy configuration -->
+          <deploy.promote>true</deploy.promote>
+          <deploy.stopPreviousVersion>true</deploy.stopPreviousVersion>
+        </configuration>
       </plugin>
     </plugins>
   </build>
