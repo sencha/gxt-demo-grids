@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.sencha.gxt.demo</groupId>
@@ -39,6 +40,16 @@
 
   <repositories>
     <repository>
+      <id>snapshots-repo</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+    <repository>
       <!-- http://docs.sencha.com/gxt/latest/getting_started/maven/Maven.html -->
       <!-- ~/.m2/settings.xml add <server/> with the support portal credentials -->
       <id>sencha-gxt-repository</id>
@@ -60,6 +71,17 @@
 
   <!-- Maven Exec, it uses the theme builder -->
   <pluginRepositories>
+    <pluginRepository>
+      <id>snapshots-repo</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <layout>default</layout>
+    </pluginRepository>
     <pluginRepository>
       <!-- http://docs.sencha.com/gxt/latest/getting_started/maven/Maven.html -->
       <!-- ~/.m2/settings.xml add <server/> with the support portal credentials -->
