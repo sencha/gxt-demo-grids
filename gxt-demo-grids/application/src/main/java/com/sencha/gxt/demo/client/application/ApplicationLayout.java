@@ -126,6 +126,7 @@ public class ApplicationLayout implements IsWidget {
   private Widget createFooter() {
     Anchor anchorSencha = new Anchor("Sencha.com", "http://sencha.com");
     Anchor anchorGuides = new Anchor("GXT 4.0 Guides", "http://docs-devel.sencha.com/gxt/4.x/");
+    Anchor anchorSource = new Anchor("This Demo Source", "https://github.com/sencha/gxt-demo-grids");
 
     BoxLayoutData layoutData = new BoxLayoutData();
     layoutData.setMargins(new Margins(0, 0, 0, 10));
@@ -136,6 +137,7 @@ public class ApplicationLayout implements IsWidget {
     HBoxLayoutContainer footer = new HBoxLayoutContainer(HBoxLayoutAlign.MIDDLE);
     footer.add(anchorSencha, layoutData);
     footer.add(anchorGuides, layoutData);
+    footer.add(anchorSource, layoutData);
     footer.add(new SimpleContainer(), flex);
 
     return footer;
