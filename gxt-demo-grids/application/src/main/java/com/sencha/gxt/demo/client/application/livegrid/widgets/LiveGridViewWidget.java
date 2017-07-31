@@ -3,6 +3,14 @@ package com.sencha.gxt.demo.client.application.livegrid.widgets;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.cell.client.AbstractCell;
+import com.google.gwt.cell.client.ValueUpdater;
+import com.google.gwt.core.shared.GWT;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -26,7 +34,7 @@ public class LiveGridViewWidget implements IsWidget {
   private Grid<Data> grid;
   private LiveGridView<Data> liveGridView;
   private PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Data>> pagingLoader;
-  
+
   private int columnsSize;
   private int rowsSize;
 
@@ -34,20 +42,20 @@ public class LiveGridViewWidget implements IsWidget {
     this.columnsSize = columnsSize;
     this.rowsSize = rowsSize;
   }
-  
+
   public void updateColRowSize(int columnsSize, int rowsSize) {
     setColRowSize(columnsSize, rowsSize);
-    
+
     ColumnModel<Data> cm = new ColumnModel<Data>(getColumns());
-    
+
     ListStore<Data> store = grid.getStore();
     store.clear();
-    
+
     grid.reconfigure(store, cm);
-    
+
     pagingLoader.load();
   }
-  
+
   @Override
   public Widget asWidget() {
     if (grid == null) {
@@ -55,11 +63,11 @@ public class LiveGridViewWidget implements IsWidget {
     }
     return grid;
   }
-  
+
   private int getColumnsSize() {
     return columnsSize;
   }
-  
+
   private int getRowsSize() {
     return rowsSize;
   }
@@ -83,7 +91,6 @@ public class LiveGridViewWidget implements IsWidget {
     };
     grid.setLoader(pagingLoader);
     grid.setLoadMask(true);
-    
 
     return grid;
   }
@@ -96,6 +103,24 @@ public class LiveGridViewWidget implements IsWidget {
       ColumnConfig<Data, String> col = new ColumnConfig<Data, String>(new ValueProviderExt(c), 75, header);
       col.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
       col.setCellPadding(false);
+
+      if (c == 1) {
+        col.setCell(new AbstractCell<String>("mouseout") {
+          @Override
+          public void render(Context context, String value, SafeHtmlBuilder sb) {
+            SafeHtml safeHtml = SafeHtmlUtils.fromTrustedString("<div style='color: #3d5631;'>" + value + "</div>");
+            sb.append(safeHtml);
+          }
+
+          @Override
+          public void onBrowserEvent(com.google.gwt.cell.client.Cell.Context context, Element parent, String value,
+              NativeEvent event, ValueUpdater<String> valueUpdater) {
+            super.onBrowserEvent(context, parent, value, event, valueUpdater);
+
+            GWT.log("event=" + event.getType());
+          }
+        });
+      }
 
       columns.add(col);
     }
