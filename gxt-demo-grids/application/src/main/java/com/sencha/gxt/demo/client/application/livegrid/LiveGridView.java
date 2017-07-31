@@ -24,11 +24,11 @@ public class LiveGridView implements IsWidget {
 
   private VerticalLayoutContainer widget;
   private LiveGridViewWidget gridWidget;
+  private LiveToolItem pagingBar;
   private IntegerSpinnerField columns;
   private IntegerSpinnerField rows;
-
-  private LiveToolItem pagingBar;
-
+  private IntegerSpinnerField cacheSize;
+  
   public void setPresenter(Presenter presenter) {
     this.presenter = presenter;
   }
@@ -47,6 +47,9 @@ public class LiveGridView implements IsWidget {
       rows = new IntegerSpinnerField();
       rows.setValue(5000);
       
+      cacheSize = new IntegerSpinnerField();
+      cacheSize.setValue(200);
+      
       BoxLayoutData layoutData = new BoxLayoutData(new Margins(0, 10, 0, 10));
       
       TextButton updateButton = new TextButton("Update");
@@ -63,6 +66,8 @@ public class LiveGridView implements IsWidget {
       fields.add(columns, layoutData);
       fields.add(new LabelToolItem("Rows:"), layoutData);
       fields.add(rows, layoutData);
+      fields.add(new LabelToolItem("Cache Size:"), layoutData);
+      fields.add(cacheSize, layoutData);
       fields.add(updateButton, layoutData);
       
       gridWidget = new LiveGridViewWidget();
@@ -81,7 +86,7 @@ public class LiveGridView implements IsWidget {
   }
 
   protected void udpateColsRows() {
-    gridWidget.updateColRowSize(columns.getCurrentValue(), rows.getCurrentValue());
+    gridWidget.updateColRowSize(columns.getCurrentValue(), rows.getCurrentValue(), cacheSize.getCurrentValue());
   }
 
 }
