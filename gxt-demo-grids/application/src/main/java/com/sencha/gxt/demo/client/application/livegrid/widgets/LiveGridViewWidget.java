@@ -159,8 +159,13 @@ public class LiveGridViewWidget implements IsWidget {
     final int offset = loadConfig.getOffset();
     int limit = loadConfig.getLimit();
 
+    int end = offset + limit;
+    if (end > getRowsSize()) {
+      end = getRowsSize();
+    }
+    
     final List<Data> datas = new ArrayList<Data>();
-    for (int i = offset; i < offset + limit; i++) {
+    for (int i = offset; i < end; i++) {
       datas.add(getData(i));
     }
 
