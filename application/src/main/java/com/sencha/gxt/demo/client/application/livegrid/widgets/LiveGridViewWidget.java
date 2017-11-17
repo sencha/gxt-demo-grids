@@ -82,7 +82,7 @@ public class LiveGridViewWidget implements IsWidget {
 
     liveGridView = new LiveGridView<Data>();
     // buffer more records than the default - default is 200
-    liveGridView.setCacheSize(50);
+    //liveGridView.setCacheSize(50);
 
     grid = new Grid<Data>(listStore, cm, liveGridView) {
       @Override
