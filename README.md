@@ -1,5 +1,7 @@
 # GXT Demo Grids.
-Show how to wire up the grids. And it allows some experimentation of sizes of simulated recordsets. 
+Show how to wire up the grids. And it allows some experimentation of sizes of simulated record sets. 
+
+<img src='theapp.png' width='400px'/>
 
 ## GXT 
 
