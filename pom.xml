@@ -41,9 +41,19 @@
         </configuration>
       </plugin>
     </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>com.google.appengine</groupId>
+          <artifactId>appengine-maven-plugin</artifactId>
+          <version>1.9.19</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
 
-   <repositories>
+  <repositories>
     <repository>
       <!-- http://docs.sencha.com/gxt/latest/getting_started/maven/Maven.html -->
       <!-- ~/.m2/settings.xml add <server/> with the support portal credentials -->
@@ -63,7 +73,7 @@
       </snapshots>
     </repository>
   </repositories>
-  
+
   <!-- Maven Exec, it uses the theme builder -->
   <pluginRepositories>
     <pluginRepository>
