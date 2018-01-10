@@ -15,11 +15,23 @@
   <description>GXT project with custom theme setup</description>
 
   <properties>
-    <appengine.maven.plugin>1.0.0</appengine.maven.plugin>
-    <jetty.maven.plugin>9.3.8.v20160314</jetty.maven.plugin>
+      <!-- App Engine ID -->
+    <app.deploy.project>sencha-gxt-demos</app.deploy.project>
+    <app.deploy.version>grids</app.deploy.version>
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
+    <archiveClasses>true</archiveClasses>
 
     <webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
   </properties>
+  
+  <prerequisites>
+    <maven>3.5</maven>
+  </prerequisites>
 
   <build>
     <outputDirectory>${webappDirectory}/WEB-INF/classes</outputDirectory>
@@ -31,7 +43,6 @@
     </resources>
 
     <plugins>
-
       <!-- Skips the GWTTestCases during Junit Testing -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -84,29 +95,16 @@
         </executions>
       </plugin>
 
-
-
-
-      <!-- https://github.com/GoogleCloudPlatform/getting-started-java/tree/master/helloworld-servlet -->
-      
-      <!-- auth: gcloud init -->
-      <!-- deploy: mvn appengine:deploy -->
+      <!-- App Engine Hosting -->
+      <!-- https://cloud.google.com/appengine/docs/standard/java/tools/using-maven -->
       <plugin>
         <groupId>com.google.cloud.tools</groupId>
         <artifactId>appengine-maven-plugin</artifactId>
-        <version>${appengine.maven.plugin}</version>
+        <version>1.3.2</version>
         <configuration>
-          <!-- deploy configuration -->
-          <deploy.promote>true</deploy.promote>
-          <deploy.stopPreviousVersion>true</deploy.stopPreviousVersion>
+          <devserver.host>0.0.0.0</devserver.host>
+          <devserver.port>8181</devserver.port>
         </configuration>
-      </plugin>
-      <!-- App Engine Debugging -->
-      <!-- run: mvn jetty:run-exploded -->
-      <plugin>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-maven-plugin</artifactId>
-        <version>${jetty.maven.plugin}</version>
       </plugin>
     </plugins>
   </build>
@@ -174,7 +172,6 @@
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
-      <version>3.1.0</version>
       <scope>provided</scope>
     </dependency>
 
