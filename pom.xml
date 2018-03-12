@@ -12,7 +12,7 @@
 
   <properties>
     <!-- GXT -->
-    <gxt.version>4.0.3-SNAPSHOT</gxt.version>
+    <gxt.version>4.0.3</gxt.version>
 
     <!-- GWT -->
     <gwt.version>2.8.2</gwt.version>
@@ -80,8 +80,8 @@
       <!-- ~/.m2/settings.xml add <server/> with the support portal credentials -->
       <id>sencha-gxt-repository</id>
       <name>Sencha GXT Repository</name>
-      <!-- <url>https://maven.sencha.com/repo/gxt-support-commercial-release</url> -->
-      <url>https://maven.sencha.com/repo/gxt-commercial-snapshot</url>
+      <url>https://maven.sencha.com/repo/gxt-support-commercial-release</url>
+      <!-- <url>https://maven.sencha.com/repo/gxt-commercial-snapshot</url> -->
     </repository>
     <repository>
       <id>snapshots-repo</id>
@@ -102,8 +102,8 @@
       <!-- ~/.m2/settings.xml add <server/> with the support portal credentials -->
       <id>sencha-gxt-repository</id>
       <name>Sencha GXT Repository</name>
-      <!-- <url>https://maven.sencha.com/repo/gxt-support-commercial-release</url> -->
-      <url>https://maven.sencha.com/repo/gxt-commercial-snapshot</url>
+      <url>https://maven.sencha.com/repo/gxt-support-commercial-release</url>
+      <!-- <url>https://maven.sencha.com/repo/gxt-commercial-snapshot</url> -->
       <layout>default</layout>
       <snapshots>
         <enabled>true</enabled>
