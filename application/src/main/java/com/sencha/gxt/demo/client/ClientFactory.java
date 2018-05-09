@@ -14,6 +14,7 @@ import com.sencha.gxt.demo.client.application.home.HomePlace;
 import com.sencha.gxt.demo.client.application.livegrid.LiveGridPlace;
 import com.sencha.gxt.demo.client.application.login.LoginPlace;
 import com.sencha.gxt.demo.client.application.simplegrid.SimpleGridPlace;
+import com.sencha.gxt.demo.client.application.splitgrid.SplitGridPlace;
 
 public class ClientFactory {
 
@@ -104,6 +105,10 @@ public class ClientFactory {
   
   public LiveGridPlace.Tokenizer getLiveGridTokenizer() {
     return new LiveGridPlace.Tokenizer();
+  }
+  
+  public SplitGridPlace.Tokenizer getSplitLiveGridTokenizer() {
+    return new SplitGridPlace.Tokenizer();
   }
 
 }

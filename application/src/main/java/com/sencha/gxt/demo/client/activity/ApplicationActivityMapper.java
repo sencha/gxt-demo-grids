@@ -12,6 +12,8 @@ import com.sencha.gxt.demo.client.application.login.LoginActivity;
 import com.sencha.gxt.demo.client.application.login.LoginPlace;
 import com.sencha.gxt.demo.client.application.simplegrid.SimpleGridActivity;
 import com.sencha.gxt.demo.client.application.simplegrid.SimpleGridPlace;
+import com.sencha.gxt.demo.client.application.splitgrid.SplitGridActivity;
+import com.sencha.gxt.demo.client.application.splitgrid.SplitGridPlace;
 
 public class ApplicationActivityMapper implements ActivityMapper {
   
@@ -50,6 +52,9 @@ public class ApplicationActivityMapper implements ActivityMapper {
           
     } else if (place instanceof LiveGridPlace) {
       activity = new LiveGridActivity((LiveGridPlace) place, clientFactory);
+      
+    } else if (place instanceof SplitGridPlace) {
+      activity = new SplitGridActivity((SplitGridPlace) place, clientFactory);
     }
     
     return activity;
