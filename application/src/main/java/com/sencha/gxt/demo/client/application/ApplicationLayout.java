@@ -104,6 +104,7 @@ public class ApplicationLayout implements IsWidget {
     Anchor anchorHome = new Anchor("Home", "#home:");
     Anchor anchorGrid = new Anchor("Simple Grid", "#simplegrid:");
     Anchor anchorLiveGrid = new Anchor("Live Grid", "#livegrid:");
+    Anchor anchorSplitLiveGrid = new Anchor("Split Grid", "#splitgrid:");
     Anchor anchorLogin = new Anchor("Login", "#login:");
 
     BoxLayoutData layoutData = new BoxLayoutData();
@@ -117,6 +118,7 @@ public class ApplicationLayout implements IsWidget {
     header.add(anchorHome, layoutData);
     header.add(anchorGrid, layoutData);
     header.add(anchorLiveGrid, layoutData);
+    header.add(anchorSplitLiveGrid, layoutData);
     header.add(new SimpleContainer(), flex); // align next item to the right
     header.add(anchorLogin, layoutData);
 
