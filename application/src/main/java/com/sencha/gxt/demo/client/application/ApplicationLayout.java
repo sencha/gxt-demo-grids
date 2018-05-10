@@ -44,6 +44,9 @@ public class ApplicationLayout implements IsWidget {
   @Override
   public Widget asWidget() {
     if (widget == null) {
+      // Be sure to inject the gss styles!
+      AppBundle.INSTANCE.appStyles().ensureInjected();
+      
       header = new SimpleContainer();
       header.add(createHeader());
 
@@ -104,7 +107,8 @@ public class ApplicationLayout implements IsWidget {
     Anchor anchorHome = new Anchor("Home", "#home:");
     Anchor anchorGrid = new Anchor("Simple Grid", "#simplegrid:");
     Anchor anchorLiveGrid = new Anchor("Live Grid", "#livegrid:");
-    Anchor anchorSplitLiveGrid = new Anchor("Split Grid", "#splitgrid:");
+    Anchor anchorSplitGrid = new Anchor("Split Grid", "#splitgrid:");
+    Anchor anchorLiveSplitGrid = new Anchor("Live Split Grid", "#livesplitgrid:");
     Anchor anchorLogin = new Anchor("Login", "#login:");
 
     BoxLayoutData layoutData = new BoxLayoutData();
@@ -114,11 +118,13 @@ public class ApplicationLayout implements IsWidget {
     flex.setFlex(1);
 
     HBoxLayoutContainer header = new HBoxLayoutContainer(HBoxLayoutAlign.MIDDLE);
+    header.setEnableOverflow(false);
     header.add(new HTML("Company"), layoutData);
     header.add(anchorHome, layoutData);
     header.add(anchorGrid, layoutData);
     header.add(anchorLiveGrid, layoutData);
-    header.add(anchorSplitLiveGrid, layoutData);
+    header.add(anchorSplitGrid, layoutData);
+    header.add(anchorLiveSplitGrid, layoutData);
     header.add(new SimpleContainer(), flex); // align next item to the right
     header.add(anchorLogin, layoutData);
 

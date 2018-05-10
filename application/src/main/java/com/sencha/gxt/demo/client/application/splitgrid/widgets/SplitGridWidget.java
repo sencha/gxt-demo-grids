@@ -3,40 +3,34 @@ package com.sencha.gxt.demo.client.application.splitgrid.widgets;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.sencha.gxt.core.client.GXT;
 import com.sencha.gxt.core.client.dom.XDOM;
 import com.sencha.gxt.core.client.dom.XElement;
-import com.sencha.gxt.core.client.gestures.PointerEventsSupport;
 import com.sencha.gxt.core.client.util.Margins;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.loader.PagingLoadConfig;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.demo.client.application.splitgrid.widgets.SplitGridView.GridSide;
-import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.container.HorizontalLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.HorizontalLayoutContainer.HorizontalLayoutData;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData;
-import com.sencha.gxt.widget.core.client.event.ReconfigureEvent;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 import com.sencha.gxt.widget.core.client.grid.GridView;
 
-public class SplitGrid<M> extends Composite {
+public class SplitGridWidget<M> implements IsWidget {
 
-  /**
-   * Use for left and right grids.
-   */
   public class GridExt<M> extends Grid<M> {
 
     private HorizontalLayoutContainer maskOnWidget;
@@ -45,130 +39,7 @@ public class SplitGrid<M> extends Composite {
       super(store, cm, view);
     }
 
-    @Override
-    public void mask() {
-      // causing issues
-    }
-
-    @Override
-    public void unmask() {
-      // causing issues
-    }
-
-    @Override
-    protected void onLoaderBeforeLoad() {
-      maskGrids();
-    }
-
-    @Override
-    protected void onLoaderLoadException() {
-      unMaskGrids();
-    }
-
-    @Override
-    protected void onLoadLoader() {
-      unMaskGrids();
-    }
-
-    public void maskGrids() {
-      // TODO would you like this? or just keep a loading icon in paging toolbar
-      // if (maskOnWidget == null) {
-      // return;
-      // }
-      // maskOnWidget.mask(DefaultMessages.getMessages().loadMask_msg());
-    }
-
-    public void unMaskGrids() {
-      // // TODO would you like this? or just keep a loading icon in paging toolbar
-      // if (maskOnWidget == null) {
-      // return;
-      // }
-      // maskOnWidget.unmask();
-    }
-
-    public void setMaskOnWidget(HorizontalLayoutContainer maskOnWidget) {
-      this.maskOnWidget = maskOnWidget;
-    }
-
-    @Override
-    public void reconfigure(ListStore<M> store, ColumnModel<M> cm) {
-      if (!viewReady) {
-        this.store = store;
-        this.cm = cm;
-        setSelectionModel(sm);
-        return;
-      }
-      // if (isLoadMask()) {
-      // mask(DefaultMessages.getMessages().loadMask_msg());
-      // }
-      // view.initData(store, cm);
-      initDataJsni(view, store, cm);
-
-      this.store = store;
-      this.cm = cm;
-      sinkCellEvents();
-      // rebind the sm
-      setSelectionModel(sm);
-
-      if (isViewReady()) {
-        view.refresh(true);
-      }
-
-      // if (isLoadMask()) {
-      // unmask();
-      // }
-
-      fireEvent(new ReconfigureEvent());
-    }
-
-    public native void initDataJsni(GridView<M> view, ListStore<M> store, ColumnModel<M> cm) /*-{
-			view.@com.sencha.gxt.widget.core.client.grid.GridView::initData(*)(store, cm);
-    }-*/;
-
-//    /**
-//     * Reconfigure will try to set the selection model again. the selection model only needs to be set in beginning.
-//     */
-//    public void setSelectionModel(CountingCheckBoxSelectionModel_LGV<M> sm) {
-//      if (this.sm != null) {
-//        this.sm.bindGrid(null);
-//      }
-//
-//      this.sm = sm;
-//
-//      if (sm != null) {
-//        sm.bindGrid(this);
-//      }
-//    }
-
-    @Override
-    protected void onTouch(Event event) {
-      // GWT.log("onTouch(e) ----- ");
-      // super.onTouch(event); // ~~~ workaround for edge
-    }
-
-    @Override
-    protected void onMouseDown(Event e) {
-      GWT.log("onMouseDown(e) ********* ");
-      super.onMouseDown(e);
-    }
-
-    @Override
-    public void onBrowserEvent(Event ce) {
-      super.onBrowserEvent(ce);
-
-      switch (ce.getTypeInt()) {
-      case Event.ONCLICK:
-        // ~~~ workaround for edge - correlates with onTouch being disabled
-        if (PointerEventsSupport.impl.isSupported()) {
-          onClick(ce);
-        }
-        break;
-      }
-    }
-
   }
-
-  // private static final GeneralCSS GENERAL_CSS = ResourcesWrapper.INSTANCE.getPortalCSSResource().getGeneralCSS();
 
   // views
   private SplitGridView<M> leftGridView;
@@ -192,28 +63,36 @@ public class SplitGrid<M> extends Composite {
    * This is used to eliminate recursive calls when setting scroll top
    */
   private int scrollLeftRigthTrack = 0;
+  
+  private Widget widget;
 
-  public SplitGrid(ListStore<M> listStore, PagingLoader<PagingLoadConfig, PagingLoadResult<M>> pagingLoader,
+  public SplitGridWidget(ListStore<M> listStore, PagingLoader<PagingLoadConfig, PagingLoadResult<M>> pagingLoader,
       List<ColumnConfig<M, ?>> leftColumns, List<ColumnConfig<M, ?>> rightColumns) {
     this.listStore = listStore;
     this.pagingLoader = pagingLoader;
     this.leftColumns = leftColumns;
     this.rightColumns = rightColumns;
-
-    initWidget(initSplitGrid());
+  }
+  
+  @Override
+  public Widget asWidget() {
+    if (widget == null) {
+      widget = createSplitGrid();
+    }
+    return widget;
   }
 
-  private Widget initSplitGrid() {
+  private Widget createSplitGrid() {
     leftGridView = new SplitGridView<M>(GridSide.LEFT);
     rightGridView = new SplitGridView<M>(GridSide.RIGHT);
 
     leftGridView.setRightGridView(rightGridView);
     rightGridView.setLeftGridView(leftGridView);
 
-    leftGrid = initLeftGrid(listStore, pagingLoader);
-    rightGrid = initRightGrid(listStore, pagingLoader);
+    leftGrid = createLeftGrid();
+    rightGrid = createRightGrid();
 
-    String borderColorClassName = "#cccccc"; // GENERAL_CSS.borderColorPrimaryAsBackground();
+    String borderColorClassName = "#cccccc";
 
     // grid center splitter line
     FlowPanel centerSplitter = new FlowPanel();
@@ -245,9 +124,6 @@ public class SplitGrid<M> extends Composite {
 
     // blank space on the left for windows
     grids.getElement().getStyle().setBackgroundColor("#b9b9b9");
-
-    leftGrid.setMaskOnWidget(grids);
-    rightGrid.setMaskOnWidget(grids);
 
     // vert - toolbar/grid
     VerticalLayoutContainer widget = new VerticalLayoutContainer();
@@ -300,8 +176,7 @@ public class SplitGrid<M> extends Composite {
   /**
    * Left Grid
    */
-  private GridExt<M> initLeftGrid(ListStore<M> listStore,
-      final PagingLoader<PagingLoadConfig, PagingLoadResult<M>> pagingLoader) {
+  private GridExt<M> createLeftGrid() {
     ColumnModel<M> leftCM = new ColumnModel<M>(getLeftColumns());
 
     final GridExt<M> leftGrid = new GridExt<M>(listStore, leftCM, leftGridView) {
@@ -337,8 +212,7 @@ public class SplitGrid<M> extends Composite {
   /**
    * Right Grid
    */
-  private GridExt<M> initRightGrid(ListStore<M> listStore,
-      final PagingLoader<PagingLoadConfig, PagingLoadResult<M>> pagingLoader) {
+  private GridExt<M> createRightGrid() {
     ColumnModel<M> rightCM = new ColumnModel<M>(getRightColumns());
 
     GridExt<M> rightGrid = new GridExt<M>(listStore, rightCM, rightGridView) {

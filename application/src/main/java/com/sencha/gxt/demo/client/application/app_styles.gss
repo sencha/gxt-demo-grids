@@ -1,0 +1,8 @@
+/* 
+Styles for the app.
+*/
+
+/* Hide the split left grid vertical scroll bar */
+.hideScrollbar {
+	overflow: hidden !important;
+}

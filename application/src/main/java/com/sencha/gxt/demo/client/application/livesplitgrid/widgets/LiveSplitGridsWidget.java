@@ -1,4 +1,4 @@
-package com.sencha.gxt.demo.client.application.splitgrid.widgets;
+package com.sencha.gxt.demo.client.application.livesplitgrid.widgets;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,49 +18,57 @@ import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.data.client.loader.RpcProxy;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
+import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
+import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfigBean;
 import com.sencha.gxt.data.shared.loader.LoadResultListStoreBinding;
-import com.sencha.gxt.data.shared.loader.PagingLoadConfig;
-import com.sencha.gxt.data.shared.loader.PagingLoadConfigBean;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.demo.client.application.splitgrid.widgets.SplitGridView.GridSide;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
-import com.sencha.gxt.widget.core.client.grid.filters.StringFilter;
-import com.sencha.gxt.widget.core.client.toolbar.PagingToolBar;
+import com.sencha.gxt.widget.core.client.grid.LiveToolItem;
 
-public class SplitGridsWidget implements IsWidget {
+public class LiveSplitGridsWidget implements IsWidget {
 
   private static final int COLUMNS_SIZE = 20;
   private static final int TOTAL_LENGTH = 5000;
+
+  private int columnsSize = COLUMNS_SIZE;
+  private int rowsSize = TOTAL_LENGTH;
 
   private VerticalLayoutContainer widget;
 
   @Override
   public Widget asWidget() {
     if (widget == null) {
-      ListStore<Data> listStore = getStore();
-      final PagingLoader<PagingLoadConfig, PagingLoadResult<Data>> pagingLoader = getLoader(listStore);
-      pagingLoader.setLimit(200);
+      ListStore<Data> listStore = createStore();
 
-      List<ColumnConfig<Data, ?>> leftColumns = getColumns(GridSide.LEFT, 0, 3);
-      List<ColumnConfig<Data, ?>> rightColumns = getColumns(GridSide.RIGHT, 3, COLUMNS_SIZE);
+      PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Data>> leftPagingLoader = createLoader(listStore);
+      PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Data>> rightPagingLoader = createLoader(listStore);
 
-      SplitGridWidget<Data> splitGrid = new SplitGridWidget<Data>(listStore, pagingLoader, leftColumns, rightColumns);
+      List<ColumnConfig<Data, ?>> leftColumns = createColumns(GridSide.LEFT, 0, 3);
+      List<ColumnConfig<Data, ?>> rightColumns = createColumns(GridSide.RIGHT, 3, COLUMNS_SIZE);
 
-      PagingToolBar pagingBar = new PagingToolBar(50);
-      pagingBar.bind(pagingLoader);
+      LiveSplitGridWidget<Data> splitGrid = new LiveSplitGridWidget<Data>(listStore, leftPagingLoader,
+          rightPagingLoader, leftColumns, rightColumns);
+
+      LiveToolItem pagingBar = new LiveToolItem(splitGrid.getRightGrid());
 
       widget = new VerticalLayoutContainer();
       widget.add(splitGrid, new VerticalLayoutData(1, 1));
       widget.add(pagingBar, new VerticalLayoutData(1, -1));
 
-      // Initially load the data
+      // Initially load the data, after it's attached
       widget.addAttachHandler(new Handler() {
         @Override
         public void onAttachOrDetach(AttachEvent event) {
-          pagingLoader.load();
+          // After isWidget is called configure the live tool item display
+          pagingBar.bindGrid(splitGrid.getRightGrid());
+
+          // load the data after it's attached
+          // initially load the cache size
+          rightPagingLoader.load(0, 200);
         }
       });
     }
@@ -68,10 +76,23 @@ public class SplitGridsWidget implements IsWidget {
     return widget;
   }
 
+  public void setColRowSize(int columnsSize, int rowsSize) {
+    this.columnsSize = columnsSize;
+    this.rowsSize = rowsSize;
+  }
+
+  private int getColumnsSize() {
+    return columnsSize;
+  }
+
+  private int getRowsSize() {
+    return rowsSize;
+  }
+
   /**
    * Columns
    */
-  private List<ColumnConfig<Data, ?>> getColumns(GridSide gridSide, int start, int limit) {
+  private List<ColumnConfig<Data, ?>> createColumns(GridSide gridSide, int start, int limit) {
     List<ColumnConfig<Data, ?>> columns = new ArrayList<ColumnConfig<Data, ?>>();
 
     // TODO move to ClientBundle
@@ -100,17 +121,10 @@ public class SplitGridsWidget implements IsWidget {
     return columns;
   }
 
-  /**
-   * The model loader.
-   * 
-   * TODO don't load on left side
-   */
-  private PagingLoader<PagingLoadConfig, PagingLoadResult<Data>> getLoader(ListStore<Data> listStore) {
-    RpcProxy<PagingLoadConfig, PagingLoadResult<Data>> proxy = new RpcProxy<PagingLoadConfig, PagingLoadResult<Data>>() {
+  private PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Data>> createLoader(ListStore<Data> store) {
+    RpcProxy<FilterPagingLoadConfig, PagingLoadResult<Data>> proxy = new RpcProxy<FilterPagingLoadConfig, PagingLoadResult<Data>>() {
       @Override
-      public void load(final PagingLoadConfig loadConfig, final AsyncCallback<PagingLoadResult<Data>> callback) {
-        GWT.log("pause loading");
-
+      public void load(FilterPagingLoadConfig loadConfig, AsyncCallback<PagingLoadResult<Data>> callback) {
         // Emulate slower loading, pause for half a second and then return some data.
         Timer t = new Timer() {
           @Override
@@ -123,16 +137,16 @@ public class SplitGridsWidget implements IsWidget {
       }
     };
 
-    PagingLoader<PagingLoadConfig, PagingLoadResult<Data>> loader = new PagingLoader<PagingLoadConfig, PagingLoadResult<Data>>(
+    PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Data>> loader = new PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Data>>(
         proxy);
-    loader.useLoadConfig(new PagingLoadConfigBean());
-    loader.addLoadHandler(new LoadResultListStoreBinding<PagingLoadConfig, Data, PagingLoadResult<Data>>(listStore));
+    loader.useLoadConfig(new FilterPagingLoadConfigBean());
+    loader.addLoadHandler(new LoadResultListStoreBinding<FilterPagingLoadConfig, Data, PagingLoadResult<Data>>(store));
     loader.setRemoteSort(true);
 
     return loader;
   }
 
-  private ListStore<Data> getStore() {
+  private ListStore<Data> createStore() {
     ListStore<Data> store = new ListStore<Data>(new ModelKeyProvider<Data>() {
       @Override
       public String getKey(Data item) {
@@ -142,15 +156,13 @@ public class SplitGridsWidget implements IsWidget {
     return store;
   }
 
-  // Return some pretend data
-  private void getDatas(PagingLoadConfig loadConfig, AsyncCallback<PagingLoadResult<Data>> callback) {
+  private void getDatas(FilterPagingLoadConfig loadConfig, AsyncCallback<PagingLoadResult<Data>> callback) {
     final int offset = loadConfig.getOffset();
     int limit = loadConfig.getLimit();
-
-    GWT.log("getDatas: offset=" + offset + " limit=" + limit);
+    int end = offset + limit;
 
     final List<Data> datas = new ArrayList<Data>();
-    for (int i = offset; i < offset + limit; i++) {
+    for (int i = offset; i < end; i++) {
       datas.add(getData(i));
     }
 
@@ -170,7 +182,7 @@ public class SplitGridsWidget implements IsWidget {
 
       @Override
       public int getTotalLength() {
-        return TOTAL_LENGTH;
+        return getRowsSize();
       }
 
       @Override
@@ -184,8 +196,8 @@ public class SplitGridsWidget implements IsWidget {
   private Data getData(int row) {
     String key = "key" + row;
 
-    String[] values = new String[COLUMNS_SIZE];
-    for (int col = 0; col < COLUMNS_SIZE; col++) {
+    String[] values = new String[getColumnsSize()];
+    for (int col = 0; col < getColumnsSize(); col++) {
       values[col] = "" + col + "," + row;
     }
 
@@ -212,12 +224,6 @@ public class SplitGridsWidget implements IsWidget {
     @Override
     public String getPath() {
       return "path" + index;
-    }
-  }
-
-  public class StringFilterExt extends StringFilter<Data> {
-    public StringFilterExt(int index) {
-      super(new ValueProviderExt(index));
     }
   }
 
@@ -253,32 +259,6 @@ public class SplitGridsWidget implements IsWidget {
       s += ")";
       return s;
     }
-
-    @Override
-    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((key == null) ? 0 : key.hashCode());
-      return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-      if (this == obj)
-        return true;
-      if (obj == null)
-        return false;
-      if (getClass() != obj.getClass())
-        return false;
-      Data other = (Data) obj;
-      if (key == null) {
-        if (other.key != null)
-          return false;
-      } else if (!key.equals(other.key))
-        return false;
-      return true;
-    }
-
   }
 
 }
