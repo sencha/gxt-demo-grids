@@ -1,4 +1,4 @@
-package com.sencha.gxt.demo.client.application.splitgrid.widgets;
+package com.sencha.gxt.demo.client.application.livesplitgrid.widgets;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -18,13 +18,13 @@ import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnHeader;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
-import com.sencha.gxt.widget.core.client.grid.GridView;
+import com.sencha.gxt.widget.core.client.grid.LiveGridView;
 import com.sencha.gxt.widget.core.client.menu.Menu;
 
 /**
  * GridView overrides
  */
-public class SplitGridView<M> extends GridView<M> {
+public class LiveSplitGridView<M> extends LiveGridView<M> {
 
   public class ColumnHeaderExt<M> extends ColumnHeader<M> {
     public ColumnHeaderExt(Grid<M> container, ColumnModel<M> cm) {
@@ -35,7 +35,6 @@ public class SplitGridView<M> extends GridView<M> {
     public void setEnableColumnResizing(boolean enable) {
       if (bar == null && enable) {
         bar = new GridSplitBar() {
-
           @Override
           protected void onDragStart(DragStartEvent e) {
             drag(true, "1px solid black", 1, 1);
@@ -107,10 +106,10 @@ public class SplitGridView<M> extends GridView<M> {
 
   // private HashSet<M> selected;
   private GridSide gridSide;
-  private SplitGridView<M> leftGridView;
-  private SplitGridView<M> rightGridView;
+  private LiveSplitGridView<M> leftGridView;
+  private LiveSplitGridView<M> rightGridView;
 
-  public SplitGridView(GridSide gridSide) {
+  public LiveSplitGridView(GridSide gridSide) {
     this.gridSide = gridSide;
 
     vbar = false;
@@ -120,12 +119,12 @@ public class SplitGridView<M> extends GridView<M> {
     }
   }
 
-  public void setLeftGridView(SplitGridView<M> leftGridView) {
+  public void setLeftGridView(LiveSplitGridView<M> leftGridView) {
     this.leftGridView = leftGridView;
     this.rightGridView = this;
   }
 
-  public void setRightGridView(SplitGridView<M> rightGridView) {
+  public void setRightGridView(LiveSplitGridView<M> rightGridView) {
     this.rightGridView = rightGridView;
     this.leftGridView = this;
   }
@@ -293,4 +292,15 @@ public class SplitGridView<M> extends GridView<M> {
     super.onHighlightRow(rowIndex, highlight);
   }
 
+  @Override
+  public int getVisibleRowCount() {
+    return super.getVisibleRowCount();
+  }
+
+  @Override
+  protected int getLiveScrollerHeight() {
+    // Subtract the 1, which is half of the last item
+    // This fixes the tearing
+    return super.getLiveScrollerHeight() - rowHeight;
+  }
 }
